@@ -375,465 +375,465 @@ int apply_point_colloc_bc(double resid_vector[], /* Residual vector for the curr
               break;
 
             case DOUBLE_RAD_BC:
-              f_double_rad(ielem_dim, &func, d_func, BC_Types[bc_input_id].u_BC,
-                           BC_Types[bc_input_id].len_u_BC);
-              break;
+	      f_double_rad(ielem_dim, &func, d_func, BC_Types[bc_input_id].u_BC,
+			      BC_Types[bc_input_id].len_u_BC);
+	      break;
 
-            case FEATURE_ROLLON_BC:
+	    case FEATURE_ROLLON_BC:
 #ifdef FEATURE_ROLLON_PLEASE
-              f_feature_rollon(ielem_dim, &func, d_func, BC_Types[bc_input_id].u_BC,
-                               BC_Types[bc_input_id].len_u_BC, BC_Types[bc_input_id].BC_Data_Int[0],
-                               time_intermediate);
+	      f_feature_rollon(ielem_dim, &func, d_func, BC_Types[bc_input_id].u_BC,
+			      BC_Types[bc_input_id].len_u_BC, BC_Types[bc_input_id].BC_Data_Int[0],
+			      time_intermediate);
 #else
-              GOMA_EH(-1, "FEATURE_ROLLON_PLEASE define needed and feature_rollon.h - talk to RBS");
+	      GOMA_EH(-1, "FEATURE_ROLLON_PLEASE define needed and feature_rollon.h - talk to RBS");
 #endif
-              break;
+	      break;
 
-            case ROLL_FLUID_BC:
-              icount = BC_Types[bc_input_id].BC_Data_Int[2];
-              xsurf[0] = BC_Types[icount].BC_Data_Float[BC_Types[icount].max_DFlt + 1];
-              xsurf[1] = BC_Types[icount].BC_Data_Float[BC_Types[icount].max_DFlt + 2];
-              xsurf[2] = BC_Types[icount].BC_Data_Float[BC_Types[icount].max_DFlt + 3];
-              f_roll_fluid(ielem_dim, &func, d_func, BC_Types[bc_input_id].u_BC,
-                           BC_Types[bc_input_id].len_u_BC, xsurf);
-              break;
-            case MOVING_PLANE_BC: {
-              double t = time_intermediate;
+	    case ROLL_FLUID_BC:
+	      icount = BC_Types[bc_input_id].BC_Data_Int[2];
+	      xsurf[0] = BC_Types[icount].BC_Data_Float[BC_Types[icount].max_DFlt + 1];
+	      xsurf[1] = BC_Types[icount].BC_Data_Float[BC_Types[icount].max_DFlt + 2];
+	      xsurf[2] = BC_Types[icount].BC_Data_Float[BC_Types[icount].max_DFlt + 3];
+	      f_roll_fluid(ielem_dim, &func, d_func, BC_Types[bc_input_id].u_BC,
+			      BC_Types[bc_input_id].len_u_BC, xsurf);
+	      break;
+	    case MOVING_PLANE_BC: {
+					  double t = time_intermediate;
 
-              fplane(ielem_dim, &func, d_func, BC_Types[bc_input_id].BC_Data_Float);
+					  fplane(ielem_dim, &func, d_func, BC_Types[bc_input_id].BC_Data_Float);
 
-              func += (BC_Types[bc_input_id].BC_Data_Float[4] * t +
-                       BC_Types[bc_input_id].BC_Data_Float[5] * t * t +
-                       BC_Types[bc_input_id].BC_Data_Float[6] * t * t * t);
-              if (af->Assemble_LSA_Mass_Matrix)
-                GOMA_EH(GOMA_ERROR, "LSA is not currently compatible with MOVING_PLANE_BC");
-            } break;
+					  func += (BC_Types[bc_input_id].BC_Data_Float[4] * t +
+							  BC_Types[bc_input_id].BC_Data_Float[5] * t * t +
+							  BC_Types[bc_input_id].BC_Data_Float[6] * t * t * t);
+					  if (af->Assemble_LSA_Mass_Matrix)
+						  GOMA_EH(GOMA_ERROR, "LSA is not currently compatible with MOVING_PLANE_BC");
+				  } break;
 
-            case MOVING_PLANE_ETCH_BC:
-              fmesh_etch_bc(&func, d_func, BC_Types[bc_input_id].BC_Data_Int[0], id, x_dot, theta,
-                            delta_t);
-              break;
+	    case MOVING_PLANE_ETCH_BC:
+				  fmesh_etch_bc(&func, d_func, BC_Types[bc_input_id].BC_Data_Int[0], id, x_dot, theta,
+						  delta_t);
+				  break;
 
-            case MESH_CONSTRAINT_BC:
-              fmesh_constraint(&func, d_func, bc_input_id);
-              break;
+	    case MESH_CONSTRAINT_BC:
+				  fmesh_constraint(&func, d_func, bc_input_id);
+				  break;
 
-            case UVARY_BC:
-            case VVARY_BC:
-            case WVARY_BC:
-              var_flag = BC_Types[bc_input_id].desc->equation;
-              fvelocity_profile(var_flag, ielem_dim, BC_Types[bc_input_id].BC_Name, &func, d_func,
-                                BC_Types[bc_input_id].u_BC, time_intermediate);
-              break;
+	    case UVARY_BC:
+	    case VVARY_BC:
+	    case WVARY_BC:
+				  var_flag = BC_Types[bc_input_id].desc->equation;
+				  fvelocity_profile(var_flag, ielem_dim, BC_Types[bc_input_id].BC_Name, &func, d_func,
+						  BC_Types[bc_input_id].u_BC, time_intermediate);
+				  break;
 
-            case U_PARABOLA_BC:
-            case V_PARABOLA_BC:
-            case W_PARABOLA_BC:
-              var_flag = BC_Types[bc_input_id].desc->equation;
-              fvelocity_parabola(var_flag, ielem_dim, BC_Types[bc_input_id].BC_Name, &func, d_func,
-                                 BC_Types[bc_input_id].u_BC, time_intermediate,
-                                 BC_Types[bc_input_id].len_u_BC);
-              break;
+	    case U_PARABOLA_BC:
+	    case V_PARABOLA_BC:
+	    case W_PARABOLA_BC:
+				  var_flag = BC_Types[bc_input_id].desc->equation;
+				  fvelocity_parabola(var_flag, ielem_dim, BC_Types[bc_input_id].BC_Name, &func, d_func,
+						  BC_Types[bc_input_id].u_BC, time_intermediate,
+						  BC_Types[bc_input_id].len_u_BC);
+				  break;
 
-            case U_VES11_PARABOLA_BC:
-            case U_VES12_PARABOLA_BC:
-            case U_VES22_PARABOLA_BC:
-            case U_VES13_PARABOLA_BC:
-            case U_VES23_PARABOLA_BC:
-            case U_VES33_PARABOLA_BC:
-            case U_VES11_1_PARABOLA_BC:
-            case U_VES12_1_PARABOLA_BC:
-            case U_VES22_1_PARABOLA_BC:
-            case U_VES13_1_PARABOLA_BC:
-            case U_VES23_1_PARABOLA_BC:
-            case U_VES33_1_PARABOLA_BC:
-            case U_VES11_2_PARABOLA_BC:
-            case U_VES12_2_PARABOLA_BC:
-            case U_VES22_2_PARABOLA_BC:
-            case U_VES13_2_PARABOLA_BC:
-            case U_VES23_2_PARABOLA_BC:
-            case U_VES33_2_PARABOLA_BC:
-            case U_VES11_3_PARABOLA_BC:
-            case U_VES12_3_PARABOLA_BC:
-            case U_VES22_3_PARABOLA_BC:
-            case U_VES13_3_PARABOLA_BC:
-            case U_VES23_3_PARABOLA_BC:
-            case U_VES33_3_PARABOLA_BC:
-            case U_VES11_4_PARABOLA_BC:
-            case U_VES12_4_PARABOLA_BC:
-            case U_VES22_4_PARABOLA_BC:
-            case U_VES13_4_PARABOLA_BC:
-            case U_VES23_4_PARABOLA_BC:
-            case U_VES33_4_PARABOLA_BC:
-            case U_VES11_5_PARABOLA_BC:
-            case U_VES12_5_PARABOLA_BC:
-            case U_VES22_5_PARABOLA_BC:
-            case U_VES13_5_PARABOLA_BC:
-            case U_VES23_5_PARABOLA_BC:
-            case U_VES33_5_PARABOLA_BC:
-            case U_VES11_6_PARABOLA_BC:
-            case U_VES12_6_PARABOLA_BC:
-            case U_VES22_6_PARABOLA_BC:
-            case U_VES13_6_PARABOLA_BC:
-            case U_VES23_6_PARABOLA_BC:
-            case U_VES33_6_PARABOLA_BC:
-            case U_VES11_7_PARABOLA_BC:
-            case U_VES12_7_PARABOLA_BC:
-            case U_VES22_7_PARABOLA_BC:
-            case U_VES13_7_PARABOLA_BC:
-            case U_VES23_7_PARABOLA_BC:
-            case U_VES33_7_PARABOLA_BC:
-              var_flag = BC_Types[bc_input_id].desc->equation;
-              f_vestress_parabola(var_flag, ielem_dim, U_PARABOLA_BC, ei[pg->imtrx]->mn, &func,
-                                  d_func, BC_Types[bc_input_id].u_BC, time_intermediate,
-                                  BC_Types[bc_input_id].len_u_BC);
-              break;
+	    case U_VES11_PARABOLA_BC:
+	    case U_VES12_PARABOLA_BC:
+	    case U_VES22_PARABOLA_BC:
+	    case U_VES13_PARABOLA_BC:
+	    case U_VES23_PARABOLA_BC:
+	    case U_VES33_PARABOLA_BC:
+	    case U_VES11_1_PARABOLA_BC:
+	    case U_VES12_1_PARABOLA_BC:
+	    case U_VES22_1_PARABOLA_BC:
+	    case U_VES13_1_PARABOLA_BC:
+	    case U_VES23_1_PARABOLA_BC:
+	    case U_VES33_1_PARABOLA_BC:
+	    case U_VES11_2_PARABOLA_BC:
+	    case U_VES12_2_PARABOLA_BC:
+	    case U_VES22_2_PARABOLA_BC:
+	    case U_VES13_2_PARABOLA_BC:
+	    case U_VES23_2_PARABOLA_BC:
+	    case U_VES33_2_PARABOLA_BC:
+	    case U_VES11_3_PARABOLA_BC:
+	    case U_VES12_3_PARABOLA_BC:
+	    case U_VES22_3_PARABOLA_BC:
+	    case U_VES13_3_PARABOLA_BC:
+	    case U_VES23_3_PARABOLA_BC:
+	    case U_VES33_3_PARABOLA_BC:
+	    case U_VES11_4_PARABOLA_BC:
+	    case U_VES12_4_PARABOLA_BC:
+	    case U_VES22_4_PARABOLA_BC:
+	    case U_VES13_4_PARABOLA_BC:
+	    case U_VES23_4_PARABOLA_BC:
+	    case U_VES33_4_PARABOLA_BC:
+	    case U_VES11_5_PARABOLA_BC:
+	    case U_VES12_5_PARABOLA_BC:
+	    case U_VES22_5_PARABOLA_BC:
+	    case U_VES13_5_PARABOLA_BC:
+	    case U_VES23_5_PARABOLA_BC:
+	    case U_VES33_5_PARABOLA_BC:
+	    case U_VES11_6_PARABOLA_BC:
+	    case U_VES12_6_PARABOLA_BC:
+	    case U_VES22_6_PARABOLA_BC:
+	    case U_VES13_6_PARABOLA_BC:
+	    case U_VES23_6_PARABOLA_BC:
+	    case U_VES33_6_PARABOLA_BC:
+	    case U_VES11_7_PARABOLA_BC:
+	    case U_VES12_7_PARABOLA_BC:
+	    case U_VES22_7_PARABOLA_BC:
+	    case U_VES13_7_PARABOLA_BC:
+	    case U_VES23_7_PARABOLA_BC:
+	    case U_VES33_7_PARABOLA_BC:
+				  var_flag = BC_Types[bc_input_id].desc->equation;
+				  f_vestress_parabola(var_flag, ielem_dim, U_PARABOLA_BC, ei[pg->imtrx]->mn, &func,
+						  d_func, BC_Types[bc_input_id].u_BC, time_intermediate,
+						  BC_Types[bc_input_id].len_u_BC);
+				  break;
 
-            case GD_CONST_BC:
-            case GD_LINEAR_BC:
-            case GD_INVERSE_BC:
-            case GD_PARAB_BC:
-            case GD_PARAB_OFFSET_BC:
-            case GD_CIRC_BC:
-            case GD_POLYN_BC:
-            case GD_TABLE_BC:
-              err = fgeneralized_dirichlet(&func, d_func, BC_Types[bc_input_id].BC_Name,
-                                           bc_input_id, theta, delta_t);
-              GOMA_EH(err, "Illegal entry in Generalized Dirichlet Condition ");
-              break;
+	    case GD_CONST_BC:
+	    case GD_LINEAR_BC:
+	    case GD_INVERSE_BC:
+	    case GD_PARAB_BC:
+	    case GD_PARAB_OFFSET_BC:
+	    case GD_CIRC_BC:
+	    case GD_POLYN_BC:
+	    case GD_TABLE_BC:
+				  err = fgeneralized_dirichlet(&func, d_func, BC_Types[bc_input_id].BC_Name,
+						  bc_input_id, theta, delta_t);
+				  GOMA_EH(err, "Illegal entry in Generalized Dirichlet Condition ");
+				  break;
 
-            case GD_TIME_BC:
-              err = evaluate_time_func(time_intermediate, &f_time, bc_input_id);
-              GOMA_EH(err, "Problems in evaluating time function");
-              if (af->Assemble_LSA_Mass_Matrix)
-                GOMA_EH(GOMA_ERROR, "LSA is not currently compatible with GD_TIME_BC");
-              break;
+	    case GD_TIME_BC:
+				  err = evaluate_time_func(time_intermediate, &f_time, bc_input_id);
+				  GOMA_EH(err, "Problems in evaluating time function");
+				  if (af->Assemble_LSA_Mass_Matrix)
+					  GOMA_EH(GOMA_ERROR, "LSA is not currently compatible with GD_TIME_BC");
+				  break;
 
-            case POROUS_PRESSURE_BC:
-              porous_pressure(&func, d_func, (int)BC_Types[bc_input_id].BC_Data_Int[0],
-                              (int)BC_Types[bc_input_id].BC_Data_Int[1]);
-              break;
-            case POROUS_PRESSURE_LUB_BC:
-              porous_pressure_lub(&func, d_func, elem_side_bc->id_side, xi, exo,
-                                  BC_Types[bc_input_id].BC_Data_Float[0]);
-              break;
+	    case POROUS_PRESSURE_BC:
+				  porous_pressure(&func, d_func, (int)BC_Types[bc_input_id].BC_Data_Int[0],
+						  (int)BC_Types[bc_input_id].BC_Data_Int[1]);
+				  break;
+	    case POROUS_PRESSURE_LUB_BC:
+				  porous_pressure_lub(&func, d_func, elem_side_bc->id_side, xi, exo,
+						  BC_Types[bc_input_id].BC_Data_Float[0]);
+				  break;
 
-            case LUB_PRESS_HYDROSTATIC_BC:
-              lub_press_hydro(&func, d_func, BC_Types[bc_input_id].BC_Data_Float[0],
-                              BC_Types[bc_input_id].BC_Data_Float[1],
-                              BC_Types[bc_input_id].BC_Data_Float[2],
-                              BC_Types[bc_input_id].BC_Data_Float[3]);
-              break;
+	    case LUB_PRESS_HYDROSTATIC_BC:
+				  lub_press_hydro(&func, d_func, BC_Types[bc_input_id].BC_Data_Float[0],
+						  BC_Types[bc_input_id].BC_Data_Float[1],
+						  BC_Types[bc_input_id].BC_Data_Float[2],
+						  BC_Types[bc_input_id].BC_Data_Float[3]);
+				  break;
 
-            case LUBP_SH_FP_FLUX_BC:
-              put_lub_flux_in_film(id, I, ielem_dim, resid_vector,
-                                   (int)BC_Types[bc_input_id].BC_Data_Int[0],
-                                   (int)BC_Types[bc_input_id].BC_Data_Int[1], local_node_list_fs);
-              func = 0.;
-              break;
+	    case LUBP_SH_FP_FLUX_BC:
+				  put_lub_flux_in_film(id, I, ielem_dim, resid_vector,
+						  (int)BC_Types[bc_input_id].BC_Data_Int[0],
+						  (int)BC_Types[bc_input_id].BC_Data_Int[1], local_node_list_fs);
+				  func = 0.;
+				  break;
 
-            case FLUID_SOLID_BC:
-            case SOLID_FLUID_BC:
-              put_liquid_stress_in_solid(
-                  id, I, ielem_dim, resid_vector, (int)BC_Types[bc_input_id].BC_Data_Int[0],
-                  (int)BC_Types[bc_input_id].BC_Data_Int[1], local_node_list_fs,
-                  BC_Types[bc_input_id].BC_Data_Float[0]);
-              func = 0.; /* this boundary condition rearranges values already in res and jac,
-                                and does not add anything into the residual */
-              break;
+	    case FLUID_SOLID_BC:
+	    case SOLID_FLUID_BC:
+				  put_liquid_stress_in_solid(
+						  id, I, ielem_dim, resid_vector, (int)BC_Types[bc_input_id].BC_Data_Int[0],
+						  (int)BC_Types[bc_input_id].BC_Data_Int[1], local_node_list_fs,
+						  BC_Types[bc_input_id].BC_Data_Float[0]);
+				  func = 0.; /* this boundary condition rearranges values already in res and jac,
+						and does not add anything into the residual */
+				  break;
 
-            case SOLID_FLUID_RS_BC:
-              put_liquid_stress_in_solid_ALE(
-                  id, I, ielem_dim, resid_vector, (int)BC_Types[bc_input_id].BC_Data_Int[0],
-                  (int)BC_Types[bc_input_id].BC_Data_Int[1], local_node_list_fs,
-                  BC_Types[bc_input_id].BC_Data_Float[0]);
-              func = 0.; /* this boundary condition rearranges values already in res and jac,
-                          * and does not add anything into the residual */
-              break;
+	    case SOLID_FLUID_RS_BC:
+				  put_liquid_stress_in_solid_ALE(
+						  id, I, ielem_dim, resid_vector, (int)BC_Types[bc_input_id].BC_Data_Int[0],
+						  (int)BC_Types[bc_input_id].BC_Data_Int[1], local_node_list_fs,
+						  BC_Types[bc_input_id].BC_Data_Float[0]);
+				  func = 0.; /* this boundary condition rearranges values already in res and jac,
+					      * and does not add anything into the residual */
+				  break;
 
-            case FLUID_SOLID_RS_BC:
-              GOMA_EH(GOMA_ERROR, "FLUID_SOLID_RS bc not implemented yet");
-              break;
+	    case FLUID_SOLID_RS_BC:
+				  GOMA_EH(GOMA_ERROR, "FLUID_SOLID_RS bc not implemented yet");
+				  break;
 
-            case SH_FLUID_STRESS_BC: {
-              int dof_map_curv[MDE] = {-1};
-              int dof_map_tens[MDE] = {-1};
-              /* Populate dof_map arrays */
-              for (ivar = 0; ivar < ei[pg->imtrx]->dof[VELOCITY1]; ivar++) {
-                inode = ei[pg->imtrx]->gnn_list[VELOCITY1][ivar];
-                for (jvar = 0; jvar < ei[pg->imtrx]->dof[SHELL_CURVATURE]; jvar++) {
-                  if (inode == ei[pg->imtrx]->gnn_list[SHELL_CURVATURE][jvar]) {
-                    dof_map_curv[ivar] = jvar;
-                  }
-                }
-                for (jvar = 0; jvar < ei[pg->imtrx]->dof[SHELL_TENSION]; jvar++) {
-                  if (inode == ei[pg->imtrx]->gnn_list[SHELL_TENSION][jvar]) {
-                    dof_map_tens[ivar] = jvar;
-                  }
-                }
-              }
+	    case SH_FLUID_STRESS_BC: {
+					     int dof_map_curv[MDE] = {-1};
+					     int dof_map_tens[MDE] = {-1};
+					     /* Populate dof_map arrays */
+					     for (ivar = 0; ivar < ei[pg->imtrx]->dof[VELOCITY1]; ivar++) {
+						     inode = ei[pg->imtrx]->gnn_list[VELOCITY1][ivar];
+						     for (jvar = 0; jvar < ei[pg->imtrx]->dof[SHELL_CURVATURE]; jvar++) {
+							     if (inode == ei[pg->imtrx]->gnn_list[SHELL_CURVATURE][jvar]) {
+								     dof_map_curv[ivar] = jvar;
+							     }
+						     }
+						     for (jvar = 0; jvar < ei[pg->imtrx]->dof[SHELL_TENSION]; jvar++) {
+							     if (inode == ei[pg->imtrx]->gnn_list[SHELL_TENSION][jvar]) {
+								     dof_map_tens[ivar] = jvar;
+							     }
+						     }
+					     }
 
-              /*Note that we send both local node numbers for bulk and shell elements */
-              put_fluid_stress_on_shell(id, dof_map_curv[id], dof_map_tens[id], I, ielem_dim,
-                                        resid_vector, local_node_list_fs,
-                                        BC_Types[bc_input_id].BC_Data_Float[0]);
+					     /*Note that we send both local node numbers for bulk and shell elements */
+					     put_fluid_stress_on_shell(id, dof_map_curv[id], dof_map_tens[id], I, ielem_dim,
+							     resid_vector, local_node_list_fs,
+							     BC_Types[bc_input_id].BC_Data_Float[0]);
 
-              func = 0.; /* this boundary condition rearranges values already in res and jac,
-                          * and does not add anything into the residual */
-            } break;
+					     func = 0.; /* this boundary condition rearranges values already in res and jac,
+							 * and does not add anything into the residual */
+				     } break;
 
-            case KINEMATIC_COLLOC_BC:
-            case VELO_NORM_COLLOC_BC:
-              /* initialize the general function to zero may have more than
-               * one entry for vector conditions like capillary */
-              memset(kfunc, 0, DIM * sizeof(double));
-              memset(d_kfunc, 0, DIM * (MAX_VARIABLE_TYPES + MAX_CONC) * MDE * sizeof(double));
-              //              if (goma_automatic_rotations.rotation_nodes == NULL) {
-              fvelo_normal_bc(kfunc, d_kfunc, BC_Types[bc_input_id].BC_Data_Float[0],
-                              contact_flag = FALSE, x_dot, theta, delta_t,
-                              (int)BC_Types[bc_input_id].BC_Name, 0, 0, 135.0);
-              //              } else {
-              //              fvelo_normal_auto_bc(kfunc, d_kfunc,
-              //                              BC_Types[bc_input_id].BC_Data_Float[0], contact_flag =
-              //                              FALSE, x_dot, theta, delta_t, (int)
-              //                              BC_Types[bc_input_id].BC_Name,0,0, 135.0,
-              //                              elem_side_bc->id_side, I);
-              //              }
-              doFullJac = 1;
-              func = kfunc[0];
-              break;
+	    case KINEMATIC_COLLOC_BC:
+	    case VELO_NORM_COLLOC_BC:
+				     /* initialize the general function to zero may have more than
+				      * one entry for vector conditions like capillary */
+				     memset(kfunc, 0, DIM * sizeof(double));
+				     memset(d_kfunc, 0, DIM * (MAX_VARIABLE_TYPES + MAX_CONC) * MDE * sizeof(double));
+				     //              if (goma_automatic_rotations.rotation_nodes == NULL) {
+				     fvelo_normal_bc(kfunc, d_kfunc, BC_Types[bc_input_id].BC_Data_Float[0],
+						     contact_flag = FALSE, x_dot, theta, delta_t,
+						     (int)BC_Types[bc_input_id].BC_Name, 0, 0, 135.0);
+				     //              } else {
+				     //              fvelo_normal_auto_bc(kfunc, d_kfunc,
+				     //                              BC_Types[bc_input_id].BC_Data_Float[0], contact_flag =
+				     //                              FALSE, x_dot, theta, delta_t, (int)
+				     //                              BC_Types[bc_input_id].BC_Name,0,0, 135.0,
+				     //                              elem_side_bc->id_side, I);
+				     //              }
+				     doFullJac = 1;
+				     func = kfunc[0];
+				     break;
 
-            case VELO_TANG1_COLLOC_BC:
-              GOMA_EH(GOMA_ERROR, "VELO_TANG1_COLLOC_BC not implemented");
-              // fzero_velo_tangent_3d(kfunc, d_kfunc, elem_side_bc->id_side, I);
-              doFullJac = 1;
-              func = kfunc[1];
-              for (int var = 0; var < MAX_VARIABLE_TYPES; var++) {
-                for (int j = 0; j < MDE; j++) {
-                  d_kfunc[0][var][j] = d_kfunc[1][var][j];
-                }
-              }
-              break;
-            case VELO_TANG2_COLLOC_BC:
-              GOMA_EH(GOMA_ERROR, "VELO_TANG2_COLLOC_BC not implemented");
-              // fzero_velo_tangent_3d(kfunc, d_kfunc, elem_side_bc->id_side, I);
-              doFullJac = 1;
-              func = kfunc[2];
-              for (int var = 0; var < MAX_VARIABLE_TYPES; var++) {
-                for (int j = 0; j < MDE; j++) {
-                  d_kfunc[0][var][j] = d_kfunc[2][var][j];
-                }
-              }
-              break;
+		    case VELO_TANG1_COLLOC_BC:
+				     GOMA_EH(GOMA_ERROR, "VELO_TANG1_COLLOC_BC not implemented");
+				     // fzero_velo_tangent_3d(kfunc, d_kfunc, elem_side_bc->id_side, I);
+				     doFullJac = 1;
+				     func = kfunc[1];
+				     for (int var = 0; var < MAX_VARIABLE_TYPES; var++) {
+					     for (int j = 0; j < MDE; j++) {
+						     d_kfunc[0][var][j] = d_kfunc[1][var][j];
+					     }
+				     }
+				     break;
+		    case VELO_TANG2_COLLOC_BC:
+				     GOMA_EH(GOMA_ERROR, "VELO_TANG2_COLLOC_BC not implemented");
+				     // fzero_velo_tangent_3d(kfunc, d_kfunc, elem_side_bc->id_side, I);
+				     doFullJac = 1;
+				     func = kfunc[2];
+				     for (int var = 0; var < MAX_VARIABLE_TYPES; var++) {
+					     for (int j = 0; j < MDE; j++) {
+						     d_kfunc[0][var][j] = d_kfunc[2][var][j];
+					     }
+				     }
+				     break;
 
-            case VELO_NORMAL_LS_COLLOC_BC:
-              /* initialize the general function to zero may have more than
-               * one entry for vector conditions like capillary */
-              memset(kfunc, 0, DIM * sizeof(double));
-              memset(d_kfunc, 0, DIM * (MAX_VARIABLE_TYPES + MAX_CONC) * MDE * sizeof(double));
-              contact_flag = (ls != NULL);
-              fvelo_normal_bc(kfunc, d_kfunc, BC_Types[bc_input_id].BC_Data_Float[0], contact_flag,
-                              x_dot, theta, delta_t, (int)BC_Types[bc_input_id].BC_Name,
-                              BC_Types[bc_input_id].BC_Data_Float[1],
-                              BC_Types[bc_input_id].BC_Data_Float[2],
-                              BC_Types[bc_input_id].BC_Data_Float[3]);
-              doFullJac = 1;
-              func = kfunc[0];
-              break;
+		    case VELO_NORMAL_LS_COLLOC_BC:
+				     /* initialize the general function to zero may have more than
+				      * one entry for vector conditions like capillary */
+				     memset(kfunc, 0, DIM * sizeof(double));
+				     memset(d_kfunc, 0, DIM * (MAX_VARIABLE_TYPES + MAX_CONC) * MDE * sizeof(double));
+				     contact_flag = (ls != NULL);
+				     fvelo_normal_bc(kfunc, d_kfunc, BC_Types[bc_input_id].BC_Data_Float[0], contact_flag,
+						     x_dot, theta, delta_t, (int)BC_Types[bc_input_id].BC_Name,
+						     BC_Types[bc_input_id].BC_Data_Float[1],
+						     BC_Types[bc_input_id].BC_Data_Float[2],
+						     BC_Types[bc_input_id].BC_Data_Float[3]);
+				     doFullJac = 1;
+				     func = kfunc[0];
+				     break;
 
-            case KIN_DISPLACEMENT_COLLOC_BC:
-              memset(kfunc, 0, DIM * sizeof(double));
-              memset(d_kfunc, 0, DIM * (MAX_VARIABLE_TYPES + MAX_CONC) * MDE * sizeof(double));
-              f_kinematic_displacement_bc(kfunc, d_kfunc, BC_Types[bc_input_id].BC_Data_Int[0],
-                                          BC_Types[bc_input_id].BC_ID, BC_Types[bc_input_id].u_BC,
-                                          BC_Types[bc_input_id].len_u_BC);
-              func = kfunc[0];
-              doFullJac = 1;
-              break;
-            case TABLE_BC:
-              apply_table_bc(&func, d_func, &BC_Types[bc_input_id], time_value);
-              if (neg_elem_volume)
-                return (status);
-              break;
+		    case KIN_DISPLACEMENT_COLLOC_BC:
+				     memset(kfunc, 0, DIM * sizeof(double));
+				     memset(d_kfunc, 0, DIM * (MAX_VARIABLE_TYPES + MAX_CONC) * MDE * sizeof(double));
+				     f_kinematic_displacement_bc(kfunc, d_kfunc, BC_Types[bc_input_id].BC_Data_Int[0],
+						     BC_Types[bc_input_id].BC_ID, BC_Types[bc_input_id].u_BC,
+						     BC_Types[bc_input_id].len_u_BC);
+				     func = kfunc[0];
+				     doFullJac = 1;
+				     break;
+		    case TABLE_BC:
+				     apply_table_bc(&func, d_func, &BC_Types[bc_input_id], time_value);
+				     if (neg_elem_volume)
+					     return (status);
+				     break;
 
-            case SH_GAMMA1_DERIV_SYMM_BC:
-              memset(kfunc, 0, DIM * sizeof(double));
-              memset(d_kfunc, 0, DIM * (MAX_VARIABLE_TYPES + MAX_CONC) * MDE * sizeof(double));
-              fgamma1_deriv_bc(kfunc, d_kfunc, BC_Types[bc_input_id].BC_Data_Float[0]);
-              func = kfunc[0];
-              doFullJac = 1;
-              el1 = ei[pg->imtrx]->ielem;
-              nf = num_elem_friends[el1];
-              if (nf == 0) {
-                GOMA_EH(GOMA_ERROR, "no friends");
-              };
-              el2 = elem_friends[el1][0];
-              err = load_neighbor_var_data(el1, el2, n_dof, dof_map, n_dofptr, -1, xi, exo);
-              doMeshMapping = 1;
-              break;
+		    case SH_GAMMA1_DERIV_SYMM_BC:
+				     memset(kfunc, 0, DIM * sizeof(double));
+				     memset(d_kfunc, 0, DIM * (MAX_VARIABLE_TYPES + MAX_CONC) * MDE * sizeof(double));
+				     fgamma1_deriv_bc(kfunc, d_kfunc, BC_Types[bc_input_id].BC_Data_Float[0]);
+				     func = kfunc[0];
+				     doFullJac = 1;
+				     el1 = ei[pg->imtrx]->ielem;
+				     nf = num_elem_friends[el1];
+				     if (nf == 0) {
+					     GOMA_EH(GOMA_ERROR, "no friends");
+				     };
+				     el2 = elem_friends[el1][0];
+				     err = load_neighbor_var_data(el1, el2, n_dof, dof_map, n_dofptr, -1, xi, exo);
+				     doMeshMapping = 1;
+				     break;
 
-            case SH_GAMMA2_DERIV_SYMM_BC:
-              memset(kfunc, 0, DIM * sizeof(double));
-              memset(d_kfunc, 0, DIM * (MAX_VARIABLE_TYPES + MAX_CONC) * MDE * sizeof(double));
-              fgamma2_deriv_bc(kfunc, d_kfunc, BC_Types[bc_input_id].BC_Data_Float[0]);
-              func = kfunc[0];
-              doFullJac = 1;
-              el1 = ei[pg->imtrx]->ielem;
-              nf = num_elem_friends[el1];
-              if (nf == 0) {
-                GOMA_EH(GOMA_ERROR, "no friends");
-              };
-              el2 = elem_friends[el1][0];
-              err = load_neighbor_var_data(el1, el2, n_dof, dof_map, n_dofptr, -1, xi, exo);
-              doMeshMapping = 1;
+		    case SH_GAMMA2_DERIV_SYMM_BC:
+				     memset(kfunc, 0, DIM * sizeof(double));
+				     memset(d_kfunc, 0, DIM * (MAX_VARIABLE_TYPES + MAX_CONC) * MDE * sizeof(double));
+				     fgamma2_deriv_bc(kfunc, d_kfunc, BC_Types[bc_input_id].BC_Data_Float[0]);
+				     func = kfunc[0];
+				     doFullJac = 1;
+				     el1 = ei[pg->imtrx]->ielem;
+				     nf = num_elem_friends[el1];
+				     if (nf == 0) {
+					     GOMA_EH(GOMA_ERROR, "no friends");
+				     };
+				     el2 = elem_friends[el1][0];
+				     err = load_neighbor_var_data(el1, el2, n_dof, dof_map, n_dofptr, -1, xi, exo);
+				     doMeshMapping = 1;
 
-              break;
+				     break;
 
-            case DVZDR_ZERO_BC:
-              memset(kfunc, 0, DIM * sizeof(double));
-              memset(d_kfunc, 0, DIM * (MAX_VARIABLE_TYPES + MAX_CONC) * MDE * sizeof(double));
+		    case DVZDR_ZERO_BC:
+				     memset(kfunc, 0, DIM * sizeof(double));
+				     memset(d_kfunc, 0, DIM * (MAX_VARIABLE_TYPES + MAX_CONC) * MDE * sizeof(double));
 
-              nwall[0] = BC_Types[bc_input_id].BC_Data_Float[1];
-              nwall[1] = BC_Types[bc_input_id].BC_Data_Float[2];
-              nwall[2] = BC_Types[bc_input_id].BC_Data_Float[3];
-              dvzdr_zero_deriv_bc(kfunc, d_kfunc, nwall, BC_Types[bc_input_id].BC_Data_Float[0]);
-              func = kfunc[0];
-              doFullJac = 1;
-              break;
+				     nwall[0] = BC_Types[bc_input_id].BC_Data_Float[1];
+				     nwall[1] = BC_Types[bc_input_id].BC_Data_Float[2];
+				     nwall[2] = BC_Types[bc_input_id].BC_Data_Float[3];
+				     dvzdr_zero_deriv_bc(kfunc, d_kfunc, nwall, BC_Types[bc_input_id].BC_Data_Float[0]);
+				     func = kfunc[0];
+				     doFullJac = 1;
+				     break;
 
-            } /* end of SWITCH statement */
+	    } /* end of SWITCH statement */
 
-            /************************************************************************/
-            /*                                                                      */
-            /*         ADD the Boundary condition functions into the Residual       */
-            /*         vector and Jacobian Matrix                                   */
-            /*		                         			            */
-            /************************************************************************/
-            /*
-             * Collocated boundary conditions are always applied on the first
-             * dof at a node. They are not discontinuous variables friendly
-             */
-            ldof_eqn = ei[pg->imtrx]->ln_to_first_dof[eqn][id];
+	    /************************************************************************/
+	    /*                                                                      */
+	    /*         ADD the Boundary condition functions into the Residual       */
+	    /*         vector and Jacobian Matrix                                   */
+	    /*		                         			            */
+	    /************************************************************************/
+	    /*
+	     * Collocated boundary conditions are always applied on the first
+	     * dof at a node. They are not discontinuous variables friendly
+	     */
+	    ldof_eqn = ei[pg->imtrx]->ln_to_first_dof[eqn][id];
 
-            if (eqn == R_MASS) {
-              ieqn = MAX_PROB_EQN + BC_Types[bc_input_id].species_eq;
-            } else {
-              ieqn = upd->ep[pg->imtrx][eqn];
-              if (goma_automatic_rotations.automatic_rotations &&
-                  (BC_Types[bc_input_id].desc->rotate != NO_ROT)) {
-                int offset = offset_from_rotated_equation(BC_Types[bc_input_id].desc->equation);
-                GOMA_EH(offset, "Error translating rotated equation to offset");
-                ieqn =
-                    equation_index_auto_rotate(elem_side_bc, I, BC_Types[bc_input_id].desc->rotate,
-                                               offset, ldof_eqn, &(BC_Types[bc_input_id]));
-                GOMA_EH(ieqn, "Could not find index from auto rotate eqn");
-              }
-            }
+	    if (eqn == R_MASS) {
+		    ieqn = MAX_PROB_EQN + BC_Types[bc_input_id].species_eq;
+	    } else {
+		    ieqn = upd->ep[pg->imtrx][eqn];
+		    if (goma_automatic_rotations.automatic_rotations &&
+				    (BC_Types[bc_input_id].desc->rotate != NO_ROT)) {
+			    int offset = offset_from_rotated_equation(BC_Types[bc_input_id].desc->equation);
+			    GOMA_EH(offset, "Error translating rotated equation to offset");
+			    ieqn =
+				    equation_index_auto_rotate(elem_side_bc, I, BC_Types[bc_input_id].desc->rotate,
+						    offset, ldof_eqn, &(BC_Types[bc_input_id]));
+			    GOMA_EH(ieqn, "Could not find index from auto rotate eqn");
+		    }
+	    }
 
-            if (ldof_eqn != -1) {
-              lec->R[LEC_R_INDEX(ieqn, ldof_eqn)] += penalty * func;
-              lec->R[LEC_R_INDEX(ieqn, ldof_eqn)] *= f_time;
+	    if (ldof_eqn != -1) {
+		    lec->R[LEC_R_INDEX(ieqn, ldof_eqn)] += penalty * func;
+		    lec->R[LEC_R_INDEX(ieqn, ldof_eqn)] *= f_time;
 
-              /*
-               * add sensitivities into matrix
-               *  - find index of sensitivity in matrix
-               *     (if variable is not defined at this node,
-               *      loop over all dofs in element)
-               *  - add into matrix
-               */
-              if (af->Assemble_Jacobian) {
+		    /*
+		     * add sensitivities into matrix
+		     *  - find index of sensitivity in matrix
+		     *     (if variable is not defined at this node,
+		     *      loop over all dofs in element)
+		     *  - add into matrix
+		     */
+		    if (af->Assemble_Jacobian) {
 
-                for (var = 0; var < MAX_VARIABLE_TYPES; var++) {
-                  pvar = upd->vp[pg->imtrx][var];
-                  if (pvar != -1 && (BC_Types[bc_input_id].desc->sens[var] || 1)) {
-                    /*
-                     * Warning!!!!!!!!!!!!!!!!!!!!!!!
-                     * This section of code will need to be revamped
-                     * to work for discontinuous variable.
-                     */
-                    if (var != MASS_FRACTION) {
-                      /*
-                       * load sensitivity index at this node point
-                       * this routine determines the entry in the jacobian matrix which
-                       * corresponds to this BC equation and this unknown - Jac_BC is a
-                       * pointer to this entry *
-                       * if it exists, add sens into matrix
-                       */
-                      if (Dolphin[pg->imtrx][I][var] > 0) {
-                        if (!doFullJac) {
-                          ldof_var = ei[pg->imtrx]->ln_to_first_dof[var][id];
-                          if (ldof_var != -1) {
-                            lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, ldof_var)] +=
-                                penalty * d_func[var];
-                            lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, ldof_var)] *= f_time;
-                          }
-                        } else {
+			    for (var = 0; var < MAX_VARIABLE_TYPES; var++) {
+				    pvar = upd->vp[pg->imtrx][var];
+				    if (pvar != -1 && (BC_Types[bc_input_id].desc->sens[var] || 1)) {
+					    /*
+					     * Warning!!!!!!!!!!!!!!!!!!!!!!!
+					     * This section of code will need to be revamped
+					     * to work for discontinuous variable.
+					     */
+					    if (var != MASS_FRACTION) {
+						    /*
+						     * load sensitivity index at this node point
+						     * this routine determines the entry in the jacobian matrix which
+						     * corresponds to this BC equation and this unknown - Jac_BC is a
+						     * pointer to this entry *
+						     * if it exists, add sens into matrix
+						     */
+						    if (Dolphin[pg->imtrx][I][var] > 0) {
+							    if (!doFullJac) {
+								    ldof_var = ei[pg->imtrx]->ln_to_first_dof[var][id];
+								    if (ldof_var != -1) {
+									    lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, ldof_var)] +=
+										    penalty * d_func[var];
+									    lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, ldof_var)] *= f_time;
+								    }
+							    } else {
 
-                          if (doMeshMapping &&
-                              (var == MESH_DISPLACEMENT1 || var == MESH_DISPLACEMENT2 ||
-                               var == MESH_DISPLACEMENT3)) {
-                            for (j = 0; j < ei[pg->imtrx]->dof[var]; j++) {
-                              jk = dof_map[j];
-                              lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, jk)] +=
-                                  penalty * d_kfunc[0][var][j];
-                              lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, jk)] *= f_time;
-                            }
-                          } else {
-                            for (j = 0; j < ei[pg->imtrx]->dof[var]; j++) {
-                              lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, j)] +=
-                                  penalty * d_kfunc[0][var][j];
-                              lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, j)] *= f_time;
-                            }
-                          }
-                        }
-                      } else {
-                        /*
-                         *   if variable is not defined at this node, loop
-                         *   over all dof for this variable in this element
-                         */
-                        for (j = 0; j < ei[pg->imtrx]->dof[var]; j++) {
-                          phi_j = bf[var]->phi[j];
-                          lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, j)] +=
-                              penalty * d_func[var] * phi_j;
-                          lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, j)] *= f_time;
-                        }
-                      }
-                    } else {
-                      for (w = 0; w < pd->Num_Species_Eqn; w++) {
-                        pvar = MAX_PROB_VAR + w;
-                        if (Dolphin[pg->imtrx][I][var] > 0) {
-                          ldof_var = ei[pg->imtrx]->ln_to_first_dof[var][id];
-                          if (ldof_var != -1) {
-                            lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, ldof_var)] +=
-                                penalty * d_func[MAX_VARIABLE_TYPES + w];
-                            lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, ldof_var)] *= f_time;
-                          }
-                        }
-                        /* if variable is not defined at this node,
-                         * loop over all dof in this element */
-                        else {
-                          for (j = 0; j < ei[pg->imtrx]->dof[var]; j++) {
-                            phi_j = bf[var]->phi[j];
-                            lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, j)] +=
-                                penalty * d_func[MAX_VARIABLE_TYPES + w] * phi_j;
-                            lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, j)] *= f_time;
-                          }
-                        }
-                      } /* end of loop over species */
-                    }   /* end of if MASS_FRACTION */
-                  }     /* end of variable exists and condition is sensitive to it */
-                }       /* end of loop over variable types */
-              }         /* end of NEWTON */
-            }           /* if (ldof_eqn != -1) */
-          }             /* END of if (Res_BC != NULL), i.e. (index_eqn != -1) */
-        }               /* END of if COLLOCATED BC */
-        /*****************************************************************************/
+								    if (doMeshMapping &&
+										    (var == MESH_DISPLACEMENT1 || var == MESH_DISPLACEMENT2 ||
+										     var == MESH_DISPLACEMENT3)) {
+									    for (j = 0; j < ei[pg->imtrx]->dof[var]; j++) {
+										    jk = dof_map[j];
+										    lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, jk)] +=
+											    penalty * d_kfunc[0][var][j];
+										    lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, jk)] *= f_time;
+									    }
+								    } else {
+									    for (j = 0; j < ei[pg->imtrx]->dof[var]; j++) {
+										    lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, j)] +=
+											    penalty * d_kfunc[0][var][j];
+										    lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, j)] *= f_time;
+									    }
+								    }
+							    }
+						    } else {
+							    /*
+							     *   if variable is not defined at this node, loop
+							     *   over all dof for this variable in this element
+							     */
+							    for (j = 0; j < ei[pg->imtrx]->dof[var]; j++) {
+								    phi_j = bf[var]->phi[j];
+								    lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, j)] +=
+									    penalty * d_func[var] * phi_j;
+								    lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, j)] *= f_time;
+							    }
+						    }
+					    } else {
+						    for (w = 0; w < pd->Num_Species_Eqn; w++) {
+							    pvar = MAX_PROB_VAR + w;
+							    if (Dolphin[pg->imtrx][I][var] > 0) {
+								    ldof_var = ei[pg->imtrx]->ln_to_first_dof[var][id];
+								    if (ldof_var != -1) {
+									    lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, ldof_var)] +=
+										    penalty * d_func[MAX_VARIABLE_TYPES + w];
+									    lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, ldof_var)] *= f_time;
+								    }
+							    }
+							    /* if variable is not defined at this node,
+							     * loop over all dof in this element */
+							    else {
+								    for (j = 0; j < ei[pg->imtrx]->dof[var]; j++) {
+									    phi_j = bf[var]->phi[j];
+									    lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, j)] +=
+										    penalty * d_func[MAX_VARIABLE_TYPES + w] * phi_j;
+									    lec->J[LEC_J_INDEX(ieqn, pvar, ldof_eqn, j)] *= f_time;
+								    }
+							    }
+						    } /* end of loop over species */
+					    }   /* end of if MASS_FRACTION */
+				    }     /* end of variable exists and condition is sensitive to it */
+			    }       /* end of loop over variable types */
+		    }         /* end of NEWTON */
+	    }           /* if (ldof_eqn != -1) */
+	  }             /* END of if (Res_BC != NULL), i.e. (index_eqn != -1) */
+	}               /* END of if COLLOCATED BC */
+	/*****************************************************************************/
       } /* END for (ibc = 0; (int) elem_side_bc->BC_input_id[ibc] != ...*/
-        /*****************************************************************************/
+      /*****************************************************************************/
     }   /* END if (I < num_owned_nodes) 				      */
-        /*****************************************************************************/
+    /*****************************************************************************/
   }     /* END for (i = 0; i < (int) elem_side_bc->num_nodes_on_side; i++) */
-        /*****************************************************************************/
+  /*****************************************************************************/
   return (status);
 } /* end of routine apply_point_colloc_bc() */
 /*****************************************************************************/
@@ -841,142 +841,142 @@ int apply_point_colloc_bc(double resid_vector[], /* Residual vector for the curr
 /*****************************************************************************/
 
 void moving_plane(int ielem_dim, double *func, double d_func[], dbl *aa, double time) {
-  fplane(ielem_dim, func, d_func, aa);
+	fplane(ielem_dim, func, d_func, aa);
 }
 /*****************************************************************************/
 /*****************************************************************************/
 /*****************************************************************************/
 
 void fplane(int ielem_dim,
-            double *func,
-            double d_func[], /* dimensioned [MAX_VARIABLE_TYPES+MAX_CONC] */
-            dbl *aa)         /*  function parameters from data card  */
+		double *func,
+		double d_func[], /* dimensioned [MAX_VARIABLE_TYPES+MAX_CONC] */
+		dbl *aa)         /*  function parameters from data card  */
 {
-  /**************************** EXECUTION BEGINS *******************************/
-  int i;
+	/**************************** EXECUTION BEGINS *******************************/
+	int i;
 
-  if (af->Assemble_LSA_Mass_Matrix)
-    return;
+	if (af->Assemble_LSA_Mass_Matrix)
+		return;
 
-  *func = (double)aa[3];
-  for (i = 0; i < ielem_dim; i++) {
-    d_func[MESH_DISPLACEMENT1 + i] = aa[i];
-    *func += (double)aa[i] * fv->x[i];
-  }
+	*func = (double)aa[3];
+	for (i = 0; i < ielem_dim; i++) {
+		d_func[MESH_DISPLACEMENT1 + i] = aa[i];
+		*func += (double)aa[i] * fv->x[i];
+	}
 
 } /* END of routine fplane                                                   */
 /*****************************************************************************/
 
 void f_fillet(const int ielem_dim,
-              double *func,
-              double d_func[],     /* dimensioned [MAX_VARIABLE_TYPES+MAX_CONC] */
-              const double *p,     /*  function parameters from data card  */
-              const int num_const) /* number of passed parameters   */
+		double *func,
+		double d_func[],     /* dimensioned [MAX_VARIABLE_TYPES+MAX_CONC] */
+		const double *p,     /*  function parameters from data card  */
+		const int num_const) /* number of passed parameters   */
 {
-  /**************************** EXECUTION BEGINS *******************************/
-  double pt[DIM], side_th[2], rad, center[DIM], alpha, theta_mid, theta_avg, tmp;
-  double theta, siderad = -1., circ[DIM] = {0., 0., 0.}, dsign, beta = 0, theta_side[2];
-  double cham_ang = -1., cham_rotn = 0., gamma = 0.;
-  int iside = 0, chamfer = 0, i, dim = 2;
+	/**************************** EXECUTION BEGINS *******************************/
+	double pt[DIM], side_th[2], rad, center[DIM], alpha, theta_mid, theta_avg, tmp;
+	double theta, siderad = -1., circ[DIM] = {0., 0., 0.}, dsign, beta = 0, theta_side[2];
+	double cham_ang = -1., cham_rotn = 0., gamma = 0.;
+	int iside = 0, chamfer = 0, i, dim = 2;
 
-  if (af->Assemble_LSA_Mass_Matrix)
-    return;
+	if (af->Assemble_LSA_Mass_Matrix)
+		return;
 
-  if (num_const < 5) {
-    GOMA_EH(GOMA_ERROR, "Need at least 5 parameters for 2D fillet geometry bc!\n");
-  }
+	if (num_const < 5) {
+		GOMA_EH(GOMA_ERROR, "Need at least 5 parameters for 2D fillet geometry bc!\n");
+	}
 
-  pt[0] = p[0];
-  pt[1] = p[1];
-  side_th[0] = p[2];
-  side_th[1] = p[3];
-  rad = p[4];
-  if (num_const >= 7) {
-    siderad = p[5];
-    iside = ((int)p[6]);
-  }
-  if (num_const >= 8) {
-    chamfer = ((int)p[7]);
-  }
-  if (num_const >= 9) {
-    cham_ang = p[8];
-  }
-  if (ielem_dim > dim)
-    GOMA_WH(-1, "FILLET_BC: Only z-invariant geometry available for now.\n");
+	pt[0] = p[0];
+	pt[1] = p[1];
+	side_th[0] = p[2];
+	side_th[1] = p[3];
+	rad = p[4];
+	if (num_const >= 7) {
+		siderad = p[5];
+		iside = ((int)p[6]);
+	}
+	if (num_const >= 8) {
+		chamfer = ((int)p[7]);
+	}
+	if (num_const >= 9) {
+		cham_ang = p[8];
+	}
+	if (ielem_dim > dim)
+		GOMA_WH(-1, "FILLET_BC: Only z-invariant geometry available for now.\n");
 
-  /**  find center of die face  **/
+	/**  find center of die face  **/
 
-  alpha = 0.5 * (side_th[1] - side_th[0]);
-  theta_avg = 0.5 * (side_th[1] + side_th[0]);
-  if (iside) {
-    dsign = ((double)(3 - 2 * iside));
-    beta = side_th[2 - iside] - dsign * asin((rad - siderad * cos(2. * alpha)) / (rad + siderad));
-    for (i = 0; i < dim; i++) {
-      circ[i] = pt[i] + dsign * siderad * sin(side_th[iside - 1] - 0.5 * M_PIE * i);
-      center[i] = circ[i] + (rad + siderad) * cos(beta - 0.5 * M_PIE * i);
-    }
-  } else {
-    for (i = 0; i < dim; i++) {
-      center[i] = pt[i] + (rad / sin(alpha)) * cos(theta_avg - 0.5 * M_PIE * i);
-    }
-  }
+	alpha = 0.5 * (side_th[1] - side_th[0]);
+	theta_avg = 0.5 * (side_th[1] + side_th[0]);
+	if (iside) {
+		dsign = ((double)(3 - 2 * iside));
+		beta = side_th[2 - iside] - dsign * asin((rad - siderad * cos(2. * alpha)) / (rad + siderad));
+		for (i = 0; i < dim; i++) {
+			circ[i] = pt[i] + dsign * siderad * sin(side_th[iside - 1] - 0.5 * M_PIE * i);
+			center[i] = circ[i] + (rad + siderad) * cos(beta - 0.5 * M_PIE * i);
+		}
+	} else {
+		for (i = 0; i < dim; i++) {
+			center[i] = pt[i] + (rad / sin(alpha)) * cos(theta_avg - 0.5 * M_PIE * i);
+		}
+	}
 
-  /**   compute angle of point on curve from arc center **/
+	/**   compute angle of point on curve from arc center **/
 
-  theta = atan2(fv->x[1] - center[1], fv->x[0] - center[0]);
-  theta = theta > side_th[1] - 1.5 * M_PIE ? theta : theta + 2 * M_PIE;
-  theta_mid = atan2(center[1] - pt[1], center[0] - pt[0]);
-  theta_side[0] = side_th[0] - 0.5 * M_PIE;
-  theta_side[1] = side_th[1];
-  if (iside == 1)
-    theta_side[0] = beta - M_PIE;
-  if (iside == 2)
-    theta_side[1] = beta + 0.5 * M_PIE;
-  if (cham_ang > 0) {
-    cham_rotn = cham_ang - (theta_mid + 0.5 * M_PIE);
-    gamma = atan(-2. * cos(alpha) * sin(cham_rotn) / cos(alpha + cham_rotn));
-  }
+	theta = atan2(fv->x[1] - center[1], fv->x[0] - center[0]);
+	theta = theta > side_th[1] - 1.5 * M_PIE ? theta : theta + 2 * M_PIE;
+	theta_mid = atan2(center[1] - pt[1], center[0] - pt[0]);
+	theta_side[0] = side_th[0] - 0.5 * M_PIE;
+	theta_side[1] = side_th[1];
+	if (iside == 1)
+		theta_side[0] = beta - M_PIE;
+	if (iside == 2)
+		theta_side[1] = beta + 0.5 * M_PIE;
+	if (cham_ang > 0) {
+		cham_rotn = cham_ang - (theta_mid + 0.5 * M_PIE);
+		gamma = atan(-2. * cos(alpha) * sin(cham_rotn) / cos(alpha + cham_rotn));
+	}
 
-  /**  use different f depending on theta  **/
+	/**  use different f depending on theta  **/
 
-  if ((theta_side[0] - gamma) <= theta && theta <= theta_avg) {
-    if (iside == 1) {
-      *func = SQUARE(fv->x[0] - circ[0]) + SQUARE(fv->x[1] - circ[1]) - SQUARE(siderad);
-      d_func[MESH_DISPLACEMENT1] = 2. * (fv->x[0] - circ[0]);
-      d_func[MESH_DISPLACEMENT2] = 2. * (fv->x[1] - circ[1]);
-    } else {
-      *func = (fv->x[1] - pt[1]) * cos(side_th[0]) - (fv->x[0] - pt[0]) * sin(side_th[0]);
-      d_func[MESH_DISPLACEMENT1] = -sin(side_th[0]);
-      d_func[MESH_DISPLACEMENT2] = cos(side_th[0]);
-    }
+	if ((theta_side[0] - gamma) <= theta && theta <= theta_avg) {
+		if (iside == 1) {
+			*func = SQUARE(fv->x[0] - circ[0]) + SQUARE(fv->x[1] - circ[1]) - SQUARE(siderad);
+			d_func[MESH_DISPLACEMENT1] = 2. * (fv->x[0] - circ[0]);
+			d_func[MESH_DISPLACEMENT2] = 2. * (fv->x[1] - circ[1]);
+		} else {
+			*func = (fv->x[1] - pt[1]) * cos(side_th[0]) - (fv->x[0] - pt[0]) * sin(side_th[0]);
+			d_func[MESH_DISPLACEMENT1] = -sin(side_th[0]);
+			d_func[MESH_DISPLACEMENT2] = cos(side_th[0]);
+		}
 
-  } else if (theta_avg <= theta && (theta - 0.5 * M_PIE) <= (theta_side[1] + 0 * gamma)) {
-    if (iside == 2) {
-      *func = SQUARE(fv->x[0] - circ[0]) + SQUARE(fv->x[1] - circ[1]) - SQUARE(siderad);
-      d_func[MESH_DISPLACEMENT1] = 2. * (fv->x[0] - circ[0]);
-      d_func[MESH_DISPLACEMENT2] = 2. * (fv->x[1] - circ[1]);
-    } else {
-      *func = (fv->x[1] - pt[1]) * cos(side_th[1]) - (fv->x[0] - pt[0]) * sin(side_th[1]);
-      d_func[MESH_DISPLACEMENT1] = -sin(side_th[1]);
-      d_func[MESH_DISPLACEMENT2] = cos(side_th[1]);
-    }
+	} else if (theta_avg <= theta && (theta - 0.5 * M_PIE) <= (theta_side[1] + 0 * gamma)) {
+		if (iside == 2) {
+			*func = SQUARE(fv->x[0] - circ[0]) + SQUARE(fv->x[1] - circ[1]) - SQUARE(siderad);
+			d_func[MESH_DISPLACEMENT1] = 2. * (fv->x[0] - circ[0]);
+			d_func[MESH_DISPLACEMENT2] = 2. * (fv->x[1] - circ[1]);
+		} else {
+			*func = (fv->x[1] - pt[1]) * cos(side_th[1]) - (fv->x[0] - pt[0]) * sin(side_th[1]);
+			d_func[MESH_DISPLACEMENT1] = -sin(side_th[1]);
+			d_func[MESH_DISPLACEMENT2] = cos(side_th[1]);
+		}
 
-  } else {
-    if (chamfer) {
-      tmp = theta_mid + cham_rotn;
-      *func = (fv->x[1] - center[1]) * sin(tmp) + (fv->x[0] - center[0]) * cos(tmp) +
-              rad * sin(alpha - cham_rotn);
-      d_func[MESH_DISPLACEMENT1] = cos(tmp);
-      d_func[MESH_DISPLACEMENT2] = sin(tmp);
-    } else {
-      *func = SQUARE(fv->x[0] - center[0]) + SQUARE(fv->x[1] - center[1]) - SQUARE(rad);
-      d_func[MESH_DISPLACEMENT1] = 2. * (fv->x[0] - center[0]);
-      d_func[MESH_DISPLACEMENT2] = 2. * (fv->x[1] - center[1]);
-    }
-  }
+	} else {
+		if (chamfer) {
+			tmp = theta_mid + cham_rotn;
+			*func = (fv->x[1] - center[1]) * sin(tmp) + (fv->x[0] - center[0]) * cos(tmp) +
+				rad * sin(alpha - cham_rotn);
+			d_func[MESH_DISPLACEMENT1] = cos(tmp);
+			d_func[MESH_DISPLACEMENT2] = sin(tmp);
+		} else {
+			*func = SQUARE(fv->x[0] - center[0]) + SQUARE(fv->x[1] - center[1]) - SQUARE(rad);
+			d_func[MESH_DISPLACEMENT1] = 2. * (fv->x[0] - center[0]);
+			d_func[MESH_DISPLACEMENT2] = 2. * (fv->x[1] - center[1]);
+		}
+	}
 
-  if (ielem_dim == 3)
-    d_func[MESH_DISPLACEMENT3] = 0.0;
+	if (ielem_dim == 3)
+		d_func[MESH_DISPLACEMENT3] = 0.0;
 
 } /* END of routine f_fillet                                                   */
 /*****************************************************************************/
@@ -990,8 +990,12 @@ void f_double_rad(const int ielem_dim,
   /**************************** EXECUTION BEGINS *******************************/
   double xpt1, ypt1, theta1, rad1, xcen1, ycen1, alpha1;
   double xpt2, ypt2, theta2, rad2, xcen2, ycen2, alpha2;
+  double xi1, yi1, xf1, yf1, xi2, yi2, xf2, yf2, xint, yint; 
+  double s1, f1, s2, f2, th1ub, th2lb;
   double theta1m, theta2m, th1, th2, th2t, curv_mid, rad_curv;
   double beta = 0, xcirc, ycirc, dist1, dist2, dist_mid;
+  double a = 0.0;
+  double atol = 1.0e-9;
   int is_curved = 0;
 
   if (af->Assemble_LSA_Mass_Matrix)
@@ -999,7 +1003,7 @@ void f_double_rad(const int ielem_dim,
 
   if (num_const < 8)
     GOMA_EH(GOMA_ERROR, "Need at least 8 parameters for Double Rad lip geometry bc!\n");
-
+  a = M_PIE;
   xpt1 = p[0];
   ypt1 = p[1];
   theta1 = p[2];
@@ -1056,15 +1060,47 @@ fprintf(stderr,"circle %g %g %g %g\n",xcirc,ycirc,xcen2, ycen2);
 #endif
   }
 
+    xf1 = xpt1 + rad1/tan(alpha1)*cos(theta1);
+    yf1 = ypt1 + rad1/tan(alpha1)*sin(theta1); 
+    xi1 = xpt1 - rad1/tan(alpha1)*cos(theta1m-M_PIE);
+    yi1 = ypt1 - rad1/tan(alpha1)*sin(theta1m-M_PIE);
+    xi2 = xcen2 + rad2*cos(theta2+0.5*M_PIE);
+    yi2 = ycen2 + rad2*sin(theta2+0.5*M_PIE); 
+    xf2 = xpt2 + rad2/tan(alpha2)*cos(theta2m);
+    yf2 = ypt2 + rad2/tan(alpha2)*sin(theta2m);
+
+    s1 = atan2(yi1-ycen1,xi1-xcen1) > 0 ? atan2(yi1-ycen1,xi1-xcen1) :  atan2(yi1-ycen1,xi1-xcen1) + 2.0*M_PIE ;
+    f1 = atan2(yf1-ycen1,xf1-xcen1) > 0 ? atan2(yf1-ycen1,xf1-xcen1) :  atan2(yf1-ycen1,xf1-xcen1) + 2.0*M_PIE ;
+    s2 = atan2(yi2-ycen2,xi2-xcen2) > 0 ? atan2(yi2-ycen2,xi2-xcen2) :  atan2(yi2-ycen2,xi2-xcen2) + 2.0*M_PIE ;
+    f2 = atan2(yf2-ycen2,xf2-xcen2) > 0 ? atan2(yf2-ycen2,xf2-xcen2) :  atan2(yf2-ycen2,xf2-xcen2) + 2.0*M_PIE ;
+
   /**   compute angle of point on curve from arc center **/
 
   th1 = atan2(fv->x[1] - ycen1, fv->x[0] - xcen1);
   th2 = atan2(fv->x[1] - ycen2, fv->x[0] - xcen2);
-  th2t = th2 > 0.0 ? th2 : th2 + 2 * M_PIE;
+  th2t = th2 > 0.0 ? th2 : th2 + 2 * M_PIE; 
+  
+  if (sqrt((theta1-0.5*M_PIE)*(theta1-0.5*M_PIE))<atol || sqrt((theta1+0.5*M_PIE)*(theta1+0.5*M_PIE))<atol ) {
+    if (sqrt((theta2-0.5*M_PIE)*(theta2-0.5*M_PIE))<atol || sqrt((theta2+0.5*M_PIE)*(theta2+0.5*M_PIE))<atol ) {
+      th1ub = 0.5*M_PIE; th2lb = 0.5*M_PIE;
+    } else {
+      xint = xpt1; yint = (xint-xpt2)*tan(theta2)+ypt2;
+      th1ub = atan2(ycen1-yint,xcen1-xint);
+      th2lb = atan2(ycen2-yint,xcen2-xint);
+    }
+  } else if (sqrt((theta2-0.5*M_PIE)*(theta2-0.5*M_PIE))<atol || sqrt((theta2+0.5*M_PIE)*(theta2+0.5*M_PIE))<atol ) {
+    xint = xpt2; yint = (xint-xpt1)*tan(theta1)+ypt1; 
+    th1ub = atan2(ycen1-yint,xcen1-xint);
+    th2lb = atan2(ycen2-yint,xcen2-xint);
+  } else if (sqrt((theta2-theta1)*(theta2-theta1))<atol) {
+    th1ub = theta1; th2lb = theta2;
+  } else {
+    th1ub = theta1; th2lb = theta2;
+  }
 
   /**  use different f depending on theta  **/
 
-  if ((theta1 - 0.5 * M_PIE) <= th1 && th1 <= (theta1 + alpha1)) {
+  if ((theta1 - 0.5 * M_PIE) <= th1 && (th1 <= th1ub)) {
     *func = (fv->x[1] - ypt1) * cos(theta1) - (fv->x[0] - xpt1) * sin(theta1);
     d_func[MESH_DISPLACEMENT1] = -sin(theta1);
     d_func[MESH_DISPLACEMENT2] = cos(theta1);
@@ -1093,15 +1129,32 @@ fprintf(stderr,"circle %g %g %g %g\n",xcirc,ycirc,xcen2, ycen2);
     }
     /*fprintf(stderr,"DR case 4 %g %g %g %g %g %g %g
      * %g\n",*func,fv->x[0],fv->x[1],th1,th2,th2t,theta1m,theta2m);*/
-  } else if ((th2t - 0.5 * M_PIE) >= theta2 && (theta2m - 0.5 * M_PIE - beta) >= th2) {
+  } else if ((th2t - 0.5 * M_PIE) >= theta2 && 
+              ((theta2m - 0.5 * M_PIE - beta) >= th2))  {
     *func = SQUARE(fv->x[0] - xcen2) + SQUARE(fv->x[1] - ycen2) - SQUARE(rad2);
     d_func[MESH_DISPLACEMENT1] = 2. * (fv->x[0] - xcen2);
     d_func[MESH_DISPLACEMENT2] = 2. * (fv->x[1] - ycen2);
     /*fprintf(stderr,"DR case 5 %g %g %g %g %g %g\n",*func,fv->x[0],fv->x[1],th1,th2,th2t);*/
   } else {
-    fprintf(stderr, "Double Rad case not found... %g %g %g %g %g\n", fv->x[0], fv->x[1], th1, th2,
-            th2t);
+    if (s2 <= th2 && th2 <= f2) {
+      *func = SQUARE(fv->x[0] - xcen2) + SQUARE(fv->x[1] - ycen2) - SQUARE(rad2);
+      d_func[MESH_DISPLACEMENT1] = 2. * (fv->x[0] - xcen2);
+      d_func[MESH_DISPLACEMENT2] = 2. * (fv->x[1] - ycen2);
+    /*fprintf(stderr,"DR case 5 %g %g %g %g %g %g\n",*func,fv->x[0],fv->x[1],th1,th2,th2t);*/
+    } else if (s1<=th1 && th1 <= f1) {
+      *func = (fv->x[1] - ypt1) * cos(theta1m) - (fv->x[0] - xpt1) * sin(theta1m);
+      d_func[MESH_DISPLACEMENT1] = -sin(theta1m);
+      d_func[MESH_DISPLACEMENT2] = cos(theta1m);
+    } else if (f1<=th1 && th1<=th1ub) {
+      *func = (fv->x[1] - ypt1) * cos(theta1) - (fv->x[0] - xpt1) * sin(theta1);
+      d_func[MESH_DISPLACEMENT1] = -sin(theta1);
+      d_func[MESH_DISPLACEMENT2] = cos(theta1);
+    } else {
+       fprintf(stderr, "Double Rad case not found... %g %g %g %g %g\n", fv->x[0], fv->x[1], th1, th2,
+              th2t);
+    }
   }
+
 
   if (ielem_dim == 3)
     d_func[MESH_DISPLACEMENT3] = 0.0;
